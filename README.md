@@ -1,4 +1,4 @@
-cs200-big-project
+CS200 - Big Project
 =================
 
 The large project for CS200 from the Fall 2014 semester.
