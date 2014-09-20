@@ -42,6 +42,10 @@ public class Occurrence {
 		++termFrequency;
 	}
 	
+	public boolean equals(Object o) {
+		return o instanceof Occurrence  && ((Occurrence) o).getDocName().equals(this.docName);
+	}
+	
 	public String toString() {
 		return this.docName;
 	}
