@@ -7,7 +7,7 @@ import java.util.LinkedList;
  */
 public class Term {
 	/**
-	 * The string that stores what term from the document this object represents.
+	 * The string that stores what term from the document this object represents in lower case.
 	 */
 	private String name;
 	
@@ -23,11 +23,12 @@ public class Term {
 
 	/**
 	 * <p>Constructs a new Term object from a given name.</p>
-	 * <p><i>NOTE: Prefer Term(String name, String  docName) for </i></p>
+	 * <p><i>NOTE: Prefer</i> {@code Term(String name, String  docName)} <i>constructor for
+	 * actual implementation. </i></p>
 	 * @param name The string the new term will represent.
 	 */
 	public Term(String name) {
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 	
 	/**
@@ -55,6 +56,13 @@ public class Term {
 	}
 	
 	/**
+	 * @return The list of occurrences for this term.
+	 */
+	public LinkedList<Occurrence> getDocsList() {
+		return this.docsList;
+	}
+	
+	/**
 	 * Registers the occurrence with docsList by either adding 
 	 * a new Occurrence or incrementing an existing one.
 	 * @param docName The name of the document where the string occurred.
@@ -69,11 +77,35 @@ public class Term {
 			if (o.equals(newDoc)) {	//If the new one matches the current one...
 				o.incFrequency();	//...increment the frequency...
 				return;	//...& GTFO.
-			} else if (docName.compareTo(o.getDocName()) > 0) {	//If we're in the right spot but there's no Occurrence...
+			} else if (docName.compareTo(o.getDocName()) < 0) {	//If we're in the right spot but there's no Occurrence...
 				docsList.add(i, newDoc);	//..add it to the list in the current position...
 				return;	//...& GTFO.
 			}
 		}
 		docsList.add(newDoc); //If we've reached the end of the list, add it to the end & GTFO.
+	}
+	
+	public String toString() {
+		return this.name;
+	}
+
+	public boolean equals(Object o) {
+		return o instanceof Term && ((Term) o).getName().equals(this.name);
+	}
+	
+	/**
+	 * Test code for Term & Occurrence models.
+	 */
+	public static void main(String[] args) {
+		Term test = new Term("term1", "doc1");
+		test.incFrequency("doc3");
+		test.incFrequency("doc1");
+		test.incFrequency("doc3");
+		test.incFrequency("adoc4");
+		
+		LinkedList<Occurrence> l = test.getDocsList();
+		for (int i = 0; i < l.size(); i++) {
+			System.out.printf("%s \t%d%n", l.get(i).toString(), l.get(i).getTermFrequency());
+		}
 	}
 }
