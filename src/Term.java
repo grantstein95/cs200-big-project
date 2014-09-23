@@ -14,7 +14,7 @@ public class Term {
 	/**
 	 * The number of times this term has appeared in documents.
 	 */
-	private int docFrequency = 1;
+	private int docFrequency = 0;
 	
 	/**
 	 * The list of the occurrences of this term in the documents.
@@ -69,20 +69,21 @@ public class Term {
 	 */
 	public void incFrequency(String docName) {
 		Occurrence newDoc = new Occurrence(docName);	//Make a new Occurrence object from the name of the document
-		Occurrence o;	//Temporary variable for the current one in the list
 		
 		for (int i = 0; i < docsList.size(); i++)  {	//Iterate through the entire list
-			//Get the current Occurrence
-			o = docsList.get(i);
-			if (o.equals(newDoc)) {	//If the new one matches the current one...
-				o.incFrequency();	//...increment the frequency...
-				return;	//...& GTFO.
+			Occurrence o = docsList.get(i);				//Get the current Occurrence
+			if (o.equals(newDoc)) {						//If the new one matches the current one...
+				o.incFrequency();						//...increment the frequency...
+				return;									//...& GTFO.
 			} else if (docName.compareTo(o.getDocName()) < 0) {	//If we're in the right spot but there's no Occurrence...
-				docsList.add(i, newDoc);	//..add it to the list in the current position...
-				return;	//...& GTFO.
+				docsList.add(i, newDoc);				//..add it to the list in the current position...
+				this.docFrequency++;					//...increment the document counter...
+				return;									//...& GTFO.
 			}
 		}
-		docsList.add(newDoc); //If we've reached the end of the list, add it to the end & GTFO.
+		docsList.add(newDoc);	//If we've reached the end of the list, add it to the end...
+		this.docFrequency++;	//...increment the document counter...
+		//...& GTFO.
 	}
 	
 	public String toString() {
@@ -104,8 +105,9 @@ public class Term {
 		test.incFrequency("adoc4");
 		
 		LinkedList<Occurrence> l = test.getDocsList();
+		System.out.printf("%d document(s) contain \"%s\":\n", test.getDocFrequency(), test);
 		for (int i = 0; i < l.size(); i++) {
-			System.out.printf("%s \t%d%n", l.get(i).toString(), l.get(i).getTermFrequency());
+			System.out.printf("%s \t%d%n", l.get(i), l.get(i).getTermFrequency());
 		}
 	}
 }
