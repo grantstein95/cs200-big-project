@@ -5,7 +5,7 @@ import java.util.LinkedList;
  * term used in one or more documents.
  * @author Bobby Signor
  */
-public class Term {
+public class Term implements Comparable<Term>{
     /**
      * The string that stores what term from the document this object represents in lower case.
      */
@@ -108,6 +108,11 @@ public class Term {
         return o instanceof Term && ((Term) o).getName().equals(this.name);
     }
 
+    @Override
+    public int compareTo(Term o) {
+        return this.name.compareTo(o.getName());
+    }
+    
     /**
      * Test code for Term & Occurrence models.
      */
@@ -124,4 +129,5 @@ public class Term {
             System.out.printf("%s \t%d%n", l.get(i), l.get(i).getTermFrequency());
         }
     }
+
 }

@@ -3,7 +3,7 @@
  * occurrence(s) in a particular document.
  * @author Bobby Signor
  */
-public class Occurrence {
+public class Occurrence implements Comparable<Occurrence> {
 	/**
 	 * The name of the document this occurrence references.
 	 */
@@ -49,4 +49,9 @@ public class Occurrence {
 	public String toString() {
 		return this.docName;
 	}
+
+    @Override
+    public int compareTo(Occurrence o) {
+        return this.docName.compareTo(o.getDocName());
+    }
 }
