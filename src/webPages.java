@@ -178,7 +178,7 @@ public class WebPages {
     }
 
     private void mergeSortByName(int first, int last) {
-        if (last - first > 1) {
+        if (last - first > 0) {
             mergeSortByName(first, first + ((last - first) / 2));
             mergeSortByName((first + ((last - first) / 2)) + 1, last);
             mergeByName(first, first + ((last - first) / 2), (first + ((last - first) / 2)) + 1, last);
