@@ -4,22 +4,22 @@ import java.util.Scanner;
 
 
 public class PA2 {
-	static boolean endFiles = false;
-	static webPages webPages = new webPages();
+	private static boolean endFiles = false;
+	private static WebPages webPages = new WebPages();
+	private static final String EOF_FLAG = "*EOFs*";
 
 	public static void main(String[] args) {
-		String eof = "*EOFs*";
 		try {
 			Scanner readInputFile = new Scanner(new File(args[0]));
 
-			while(endFiles == false){ 
+			while (endFiles == false){ 
 				String exampleName = readInputFile.next();
-				if(exampleName.equals(eof)){
+				if (exampleName.equals(EOF_FLAG)) {
 					endFiles = true;
-				}else{
+				} else {
 					webPages.addPage(exampleName);
 				}
-			}//end while
+			}
 
 			webPages.printTerms();
 
@@ -27,23 +27,25 @@ public class PA2 {
 			webPages.pruneStopWords(numStopWords);
 			webPages.printTerms();
 
-			while(readInputFile.hasNext()){
-				String tempString = readInputFile.next().toLowerCase();
+			while (readInputFile.hasNext()) {
+				String tempString = readInputFile.next();
 				String[] temp = webPages.whichPages(tempString);
 				if(temp != null){
 					System.out.print(tempString + " in pages: ");
-					for(int i = 0; i < temp.length; i++){
-						System.out.print(temp[i] + ", "); 
+					for (int i = 0; i < temp.length; i++) {
+						System.out.print(temp[i]);
+						if (i != temp.length - 1)
+							System.out.print(", ");
 					}
 					System.out.println();
-				}else{
+				} else {
 					System.out.println(tempString + " not found");
 				}
 			}
 			
 			readInputFile.close();
 		} catch (FileNotFoundException e) {
-			
+			System.err.println("File not found!");
 			e.printStackTrace();
 		}
 	}

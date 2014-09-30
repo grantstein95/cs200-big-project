@@ -1,9 +1,3 @@
-/**
- * Code for mergesort methods taken from Data Abstraction and Problem Solving with Java 3rd Edition by
- * Prichard and Carrano with modifications. Some additional inspiration and assistance taken from Dr. Adele Howe's
- * lecture slides for the CS200 course at Colorado State University.
- */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -23,19 +17,13 @@ public class WebPages {
     /**
      * A counter used for grading purposes.
      */
-    private int timesMergeSortRan;
-    
-    /**
-     * A helper index for things.
-     */
-    private int helpingIndex;
+    private int timesMerged;
 
     /**
      * Default constructor.
      */
     public WebPages() {
-        this.timesMergeSortRan = 0;
-        this.helpingIndex = 0;
+        this.timesMerged = 0;
     }
 
     /**
@@ -98,7 +86,7 @@ public class WebPages {
      */
     public Term findWord(String name) {
         int start = 0, end = this.termIndex.size() - 1, middle = start + ((end - start) / 2);
-        Term newTerm = new Term(term);
+        Term newTerm = new Term(name);
 
         while (end >= start) {
             if (this.termIndex.get(middle).compareTo(newTerm) < 0) {
@@ -138,143 +126,88 @@ public class WebPages {
      * @param n The number of words to prune.
      */
     public void pruneStopWords(int n){                      //remove a certain number of determined stopwords from the arraylist
-        mergeSortByCount(termIndex, 0, termIndex.size());   //sort terms by total # of occurrences
+        this.timesMerged = 0;
+        mergeSortByCount(0, termIndex.size() - 1);          //sort terms by total # of occurrences
+        System.out.println("Copies: " + this.timesMerged);
         for(int i = 0; i < n; i++){                         //remove the number of stop words
-            termIndex.remove(termIndex.size());
+            termIndex.remove(termIndex.size() - 1);
         }
-        mergeSortByWord(termIndex, 0, termIndex.size());    //re-sort the terms alphabetically
+        this.timesMerged = 0;
+        mergeSortByName(0, termIndex.size() - 1);           //re-sort the terms alphabetically
+        System.out.println("Copies: " + this.timesMerged + "\n");
     }
 
     /**
-     * Sort the
-     * @param terms
-     * @param first
-     * @param last
+     * Performs a Merge Sort on termIndex by totalFrequency.
+     * @param first The first element in the section.
+     * @param last The last element in the section.
+     * @author Bobby Signor
      */
-    public void mergeSortByWord(ArrayList<Term> terms, int first, int last){    //merge sort alphabetically from a-z
-        if(first < last){
-            int mid = (first + last) /2;                            //set mid
-            mergeSortByWord(terms, first, mid);                     //sort bottom half
-            mergeSortByWord(terms, mid + 1, last);                  //sort top half
-            mergeByWord(terms, first, mid, last);                   //combine two halves in order
+    private void mergeSortByCount(int first, int last) {
+        if (last - first > 0) {
+            int middle = first + ((last - first) / 2);
+            mergeSortByCount(first, middle);
+            mergeSortByCount(middle + 1, last);
+            mergeByCount(first, middle, middle + 1, last);
         }
     }
 
-    /**
-     *
-     * @param terms
-     * @param first
-     * @param mid
-     * @param last
-     */
-    public void mergeByWord(ArrayList<Term> terms, int first, int mid, int last){ //helper method pointing to real sorter
-        ArrayList<Term> tempArray = new ArrayList<Term>();
-        mergeByWord(terms, tempArray, first, mid, last);
-    }
+    private void mergeByCount(int s1Front, int s1Back, int s2Front, int s2Back) {
+        int s1Current = s1Front, s2Current = s2Front;
+        ArrayList<Term> temp = new ArrayList<Term>(s2Back - s1Front);
 
-    /**
-     *
-     * @param terms
-     * @param tempArray
-     * @param first
-     * @param mid
-     * @param last
-     */
-    public void mergeByWord(ArrayList<Term> terms, ArrayList<Term> tempArray, int first, int mid, int last){ //contains mergesort algorithm for words
-        int first1 = first; int last1 = mid; int first2 = mid+1; int last2 = last; int index = first1;      //set helpful indexes
-
-        while((first1 <= last1) && (first2 <= last2)){                                      //sort at least one half of the array into the temp array
-            if( terms.get(first1).getName().compareTo(terms.get(last1).getName()) < 0){     //if a word is "less than" another lexicographically, add it to the temp array
-                tempArray.add(index, terms.get(first1));
-                first1++;
-            }else{
-                tempArray.add(index, terms.get(first2));
-                first2++;
+        while (s1Current <= s1Back && s2Current <= s2Back) {
+            if (this.termIndex.get(s1Current).getTotalFrequency() <= this.termIndex.get(s2Current).getTotalFrequency()) {
+                this.timesMerged++;
+                temp.add(this.termIndex.get(s1Current));
+                s1Current++;
+            } else {
+                temp.add(this.termIndex.get(s2Current));
+                s2Current++;
             }
-            index++;
         }
 
-        while(first1 <= last1){                                                             //finish sorting the first half of the array if necessary
-            tempArray.add(index, terms.get(first1));
-            first1++;
-            index++;
-        }
+        while (s1Current <= s1Back)
+            temp.add(this.termIndex.get(s1Current++));
 
-        while(first2 <= last2){                                                             //finish sorting the last half of the array if necessary
-            tempArray.add(index, terms.get(first2));
-            first2++;
-            index++;
-        }
+        while (s2Current <= s2Back)
+            temp.add(this.termIndex.get(s2Current++));
 
-        for(int i = 0; i < terms.size(); i++){                                              //copy the temporary array to the legit one
-            terms.set(i, tempArray.get(i));
+        for (int i = 0; i < temp.size(); i++)
+            this.termIndex.set(i + s1Front, temp.get(i));
+    }
+
+    private void mergeSortByName(int first, int last) {
+        if (last - first > 1) {
+            mergeSortByName(first, first + ((last - first) / 2));
+            mergeSortByName((first + ((last - first) / 2)) + 1, last);
+            mergeByName(first, first + ((last - first) / 2), (first + ((last - first) / 2)) + 1, last);
         }
     }
 
-    /**
-     *
-     * @param terms
-     * @param first
-     * @param last
-     */
-    public void mergeSortByCount(ArrayList<Term> terms, int first, int last){   //merge sort by total frequency from lowest to highest
-        if(first < last){
-            int mid = (first + last) /2;
-            mergeSortByCount(terms, first, mid);
-            mergeSortByCount(terms, mid + 1, last);
-            mergeByCount(terms, first, mid, last);
-        }
-    }
+    private void mergeByName(int s1Front, int s1Back, int s2Front, int s2Back) {
+                int s1Current = s1Front, s2Current = s2Front;
+        ArrayList<Term> temp = new ArrayList<Term>(s2Back - s1Front);
 
-    /**
-     *
-     * @param terms
-     * @param first
-     * @param mid
-     * @param last
-     */
-    public void mergeByCount(ArrayList<Term> terms, int first, int mid, int last){ //helper method pointing to real sorter
-        ArrayList<Term> tempArray = new ArrayList<Term>();
-        mergeByCount(terms, tempArray, first, mid, last);
-    }
-
-    /**
-     *
-     * @param terms
-     * @param tempArray
-     * @param first
-     * @param mid
-     * @param last
-     */
-    public void mergeByCount(ArrayList<Term> terms, ArrayList<Term> tempArray, int first, int mid, int last){ //contains mergesort algorithm for counts
-        int first1 = first; int last1 = mid; int first2 = mid+1; int last2 = last; int index = first1;
-
-        while((first1 <= last1) && (first2 <= last2)){
-            if( terms.get(first1).getTotalFrequency() < terms.get(first2).getTotalFrequency()){
-                tempArray.add(index, terms.get(first1));
-                first1++;
-            }else{
-                tempArray.add(index, terms.get(first2));
-                first2++;
+        while (s1Current <= s1Back && s2Current <= s2Back) {
+            if (this.termIndex.get(s1Current).compareTo(this.termIndex.get(s2Current)) <= 0) {
+                this.timesMerged++;
+                temp.add(this.termIndex.get(s1Current));
+                s1Current++;
+            } else {
+                temp.add(this.termIndex.get(s2Current));
+                s2Current++;
             }
-            index++;
         }
 
-        while(first1 <= last1){
-            tempArray.add(index, terms.get(first1));
-            first1++;
-            index++;
-        }
+        while (s1Current <= s1Back)
+            temp.add(this.termIndex.get(s1Current++));
 
-        while(first2 <= last2){
-            tempArray.add(index, terms.get(first2));
-            first2++;
-            index++;
-        }
+        while (s2Current <= s2Back)
+            temp.add(this.termIndex.get(s2Current++));
 
-        for(int i = 0; i < terms.size(); i++){
-            terms.set(i, tempArray.get(i));
-        }
+        for (int i = 0; i < temp.size(); i++)
+            this.termIndex.set(i + s1Front, temp.get(i));
     }
 
     /**
@@ -285,5 +218,13 @@ public class WebPages {
         for (int i = 0; i < termIndex.size(); i++) {
             System.out.println(termIndex.get(i));
         }
+        System.out.println();
+    }
+    
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Term t : this.termIndex)
+            s.append((t.getName() + "\t" + t.getTotalFrequency() + "\n"));
+        return s.toString();
     }
 }
