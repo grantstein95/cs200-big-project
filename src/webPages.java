@@ -46,7 +46,7 @@ public class WebPages {
     public void addPage(String fileName){
         try {
             Scanner scanFile = new Scanner(new File(fileName));
-            scanFile.useDelimiter("(<[^>]*>)|([^A-z0-9'<>]+)");     //Tell the scanner to filter out all HTML tags & extraneous punctuation as delimiters
+            scanFile.useDelimiter("(<[^>]*>\\s*)|([^A-z0-9'<>]+)");     //Tell the scanner to filter out all HTML tags & extraneous punctuation as delimiters
             while(scanFile.hasNext())                               //While there's still stuff left in the document...
                 addWord(new Term(scanFile.next(), fileName));       //...take the word, make it into a term,
             scanFile.close();
