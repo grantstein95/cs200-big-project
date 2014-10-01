@@ -86,6 +86,7 @@ public class WebPages {
      * Finds a term in the list or returns null if it's not found.
      * @param name The name of the term to look for
      * @return The term if found, null otherwise
+     * @author Bobby Signor
      */
     public Term findWord(String name) {
         int start = 0, end = this.termIndex.size() - 1, middle = start + ((end - start) / 2);
@@ -106,9 +107,10 @@ public class WebPages {
     }
 
     /**
-     * Returns an array with the names of all the files where the given word occurrs.
+     * Returns an array with the names of all the files where the given word occurs.
      * @param word The word to look for
-     * @return An array containing the names of all the files where the word occurrs
+     * @return An array containing the names of all the files where the word occurs
+     * @author Bobby Signor & Grant Stein
      */
     public String[] whichPages(String word) {
         Term temp = findWord(word);
@@ -127,6 +129,7 @@ public class WebPages {
     /**
      * Prunes a given number of words.
      * @param n The number of words to prune.
+     * @author Grant Stein
      */
     public void pruneStopWords(int n){                      //remove a certain number of determined stopwords from the arraylist
         this.timesMerged = 0;
@@ -161,6 +164,7 @@ public class WebPages {
      * @param s1Back The back of the first section of the array.
      * @param s2Front The front of the second section of the array.
      * @param s2Back The back of the second section of the array.
+     * @author Bobby Signor
      */
     private void mergeByCount(int s1Front, int s1Back, int s2Front, int s2Back) {
         int s1Current = s1Front, s2Current = s2Front;
@@ -207,6 +211,7 @@ public class WebPages {
      * @param s1Back The back of the first section of the array.
      * @param s2Front The front of the second section of the array.
      * @param s2Back The back of the second section of the array.
+     * @author Bobby Signor
      */
     private void mergeByName(int s1Front, int s1Back, int s2Front, int s2Back) {
                 int s1Current = s1Front, s2Current = s2Front;
@@ -235,6 +240,7 @@ public class WebPages {
 
     /**
      * Prints the Terms in termIndex in PA2's format
+     * @author Grant Stein
      */
     public void printTerms(){
         System.out.println("WORDS");
