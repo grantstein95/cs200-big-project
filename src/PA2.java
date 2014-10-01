@@ -2,7 +2,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-
+/**
+ * The tester class for PA2.
+ * @author Grant Stein
+ */
 public class PA2 {
 	private static boolean endFiles = false;
 	private static WebPages webPages = new WebPages();

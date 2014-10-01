@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 /**
- * Class used to store and organize terms.
+ * Object used to store and organize terms.
  * @author Grant Stein & Bobby Signor
  */
 public class WebPages {
@@ -34,9 +34,12 @@ public class WebPages {
     public void addPage(String fileName){
         try {
             Scanner scanFile = new Scanner(new File(fileName));
-            scanFile.useDelimiter("(<[^>]*>\\s*)|([^A-z0-9'<>]+)");     //Tell the scanner to filter out all HTML tags & extraneous punctuation as delimiters
-            while(scanFile.hasNext())                               //While there's still stuff left in the document...
-                addWord(new Term(scanFile.next(), fileName));       //...take the word, make it into a term,
+            scanFile.useDelimiter("(<[^>]*>[^A-z0-9<>]*)|([^A-z0-9'<>]+)");     //Tell the scanner to filter out all HTML tags & extraneous punctuation as delimiters
+            while(scanFile.hasNext()) {                               //While there's still stuff left in the document...
+                String s = scanFile.next();
+                if (!s.equals(""))
+                    addWord(new Term(s, fileName));       //...take the word, make it into a term,
+            }
             scanFile.close();
         } catch (FileNotFoundException e) {
             System.err.println("Error: No file found.");            //Print a message to the error console
