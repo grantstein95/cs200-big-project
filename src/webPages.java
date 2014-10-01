@@ -141,7 +141,7 @@ public class WebPages {
     }
 
     /**
-     * Performs a Merge Sort on termIndex by totalFrequency.
+     * Performs a Merge Sort on termIndex by total frequency.
      * @param first The first element in the section.
      * @param last The last element in the section.
      * @author Bobby Signor
@@ -155,6 +155,13 @@ public class WebPages {
         }
     }
 
+    /**
+     * Merges 2 sections of the array back together in ascending order by total frequency.
+     * @param s1Front The front of the first section of the array.
+     * @param s1Back The back of the first section of the array.
+     * @param s2Front The front of the second section of the array.
+     * @param s2Back The back of the second section of the array.
+     */
     private void mergeByCount(int s1Front, int s1Back, int s2Front, int s2Back) {
         int s1Current = s1Front, s2Current = s2Front;
         ArrayList<Term> temp = new ArrayList<Term>(s2Back - s1Front);
@@ -180,6 +187,12 @@ public class WebPages {
             this.termIndex.set(i + s1Front, temp.get(i));
     }
 
+    /**
+     * Performs a Merge Sort on termIndex in alphabetical order.
+     * @param first The first element in the section.
+     * @param last The last element in the section.
+     * @author Bobby Signor
+     */
     private void mergeSortByName(int first, int last) {
         if (last - first > 0) {
             mergeSortByName(first, first + ((last - first) / 2));
@@ -188,6 +201,13 @@ public class WebPages {
         }
     }
 
+    /**
+     * Merges 2 sections of the array back together in ascending alphabetical order.
+     * @param s1Front The front of the first section of the array.
+     * @param s1Back The back of the first section of the array.
+     * @param s2Front The front of the second section of the array.
+     * @param s2Back The back of the second section of the array.
+     */
     private void mergeByName(int s1Front, int s1Back, int s2Front, int s2Back) {
                 int s1Current = s1Front, s2Current = s2Front;
         ArrayList<Term> temp = new ArrayList<Term>(s2Back - s1Front);
@@ -214,16 +234,16 @@ public class WebPages {
     }
 
     /**
-     *
+     * Prints the Terms in termIndex in PA2's format
      */
-    public void printTerms(){   //print all of the terms in the arraylist
+    public void printTerms(){
         System.out.println("WORDS");
         for (int i = 0; i < termIndex.size(); i++) {
             System.out.println(termIndex.get(i));
         }
         System.out.println();
     }
-    
+
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Term t : this.termIndex)
