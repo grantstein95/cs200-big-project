@@ -116,12 +116,23 @@ public class WebPages {
         private BSTNode<T> root = null;
         private int size = 0;
 
+        /**
+         * An empty constructor to meet the assignment's requirements.
+         */
         public BST() { /* Empty Constructor */ }
 
+        /**
+         * Constructor that sets the root node's item to a passed in parameter.
+         * @param root Item to be assigned to the root node.
+         */
         public BST(T root) {
             add(root);
         }
 
+        /**
+         * Adds an item to the BST.
+         * @param item An item to add to the BST.
+         */
         public void add(T item) {
             if (item != null) {
                 if (size == 0) {
@@ -133,6 +144,9 @@ public class WebPages {
             }
         }
 
+        /**
+         * Recursive helper method for add.
+         */
         private void add(T item, BSTNode<T> current) {
             BSTNode<T> temp;
             int compResult = current.getItem().compareTo(item);
@@ -156,10 +170,19 @@ public class WebPages {
             }
         }
 
+        /**
+         * Returns an item from the list with the same name as the one passed in.
+         * @param item Item to find
+         * @param printDepth Whether or not to print out the deepest level it has traversed to.
+         * @return An item with the same name as the the one that was passed in, or null.
+         */
         public T get(T item, boolean printDepth) {
             return get(item, printDepth, 0, this.root);
         }
 
+        /**
+         * Recursive helper for get.
+         */
         private T get(T item, boolean printDepth, int depth, BSTNode<T> current) {
             if (current != null) {
                 int compResult = current.getItem().compareTo(item);
@@ -179,8 +202,17 @@ public class WebPages {
             }
         }
 
+        /**
+         * Returns the number of elements in the BST.
+         * @return The number of elements in the BST.
+         */
         public int size() {
             return this.size;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new BSTIterator<T>(this);
         }
 
         /**
@@ -239,14 +271,25 @@ public class WebPages {
             private LinkedBlockingQueue<T> inorder = new LinkedBlockingQueue<T>();
             private BST<T> origin;
             
+            /**
+             * Creates an in-order iterator from the 
+             * @param origin
+             */
             public BSTIterator(BST<T> origin)  {
                 this.origin = origin;
+                startAssembleInorder();
             }
 
+            /**
+             * Begins assembling the queue in in-order.
+             */
             private void startAssembleInorder() {
                 assembleInorder(this.origin.root);
             }
 
+            /**
+             * recursive helper for startAssembleInorder
+             */
             private void assembleInorder(BST<T>.BSTNode<T> current) {
                 if (current != null) {
                     assembleInorder(current.getLeftNode());
@@ -269,11 +312,6 @@ public class WebPages {
             public void remove() {
                 throw new UnsupportedOperationException();
             }
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return new BSTIterator<T>(this);
         }
     }
 }
