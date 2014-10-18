@@ -1,8 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Object used to store and organize terms.
@@ -255,5 +257,179 @@ public class WebPages {
         for (Term t : this.termIndex)
             s.append((t.getName() + "\t" + t.getTotalFrequency() + "\n"));
         return s.toString();
+    }
+
+    /**
+     * An internal structure representing a Binary Search Tree.
+     * @author Bobby Signor
+     * @param <T> The data type to be stored by the data structure.
+     */
+    private class BST<T extends Term> implements Iterable<T> {
+        private BSTNode<T> root = null;
+        private int size = 0;
+
+        public BST() { /* Empty Constructor */ }
+
+        public BST(T root) {
+            add(root);
+        }
+
+        public void add(T item) {
+            if (item != null) {
+                if (size == 0) {
+                    root = new BSTNode<T>(item);
+                    size++;
+                } else {
+                    add(item, this.root);
+                }
+            }
+        }
+
+        private void add(T item, BSTNode<T> current) {
+            BSTNode<T> temp;
+            int compResult = current.getItem().compareTo(item);
+
+            if (compResult == 0) {
+                current.getItem().incFrequency(item.getDocsList().get(0).getDocName());
+            } else if (compResult > 0) {
+                temp = current.getRightNode();
+                if (temp != null) {
+                    add(item, temp);
+                } else {
+                    current.setRightNode(new BSTNode<T>(item));
+                }
+            } else {
+                temp = current.getLeftNode();
+                if (temp != null) {
+                    add(item, temp);
+                } else {
+                    current.setLeftNode(new BSTNode<T>(item));
+                }
+            }
+        }
+
+        public T get(T item, boolean printDepth) {
+            return get(item, printDepth, 0, this.root);
+        }
+
+        private T get(T item, boolean printDepth, int depth, BSTNode<T> current) {
+            if (current != null) {
+                int compResult = current.getItem().compareTo(item);
+                if (compResult == 0) {
+                    if (printDepth)
+                        System.out.printf("  At depth %d\n", depth);
+                    return current.getItem();
+                } else if (compResult > 0) {
+                    return get(item, printDepth, depth + 1, current.getRightNode());
+                } else {
+                    return get(item, printDepth, depth + 1, current.getLeftNode());
+                }
+            } else {
+                if (printDepth)
+                    System.out.printf("  At depth %d\n", depth);
+                return null;
+            }
+        }
+
+        public int size() {
+            return this.size;
+        }
+
+        public boolean isEmpty() {
+            return this.size == 0;
+        }
+
+        /**
+         * The internal object model for the nodes in the tree.
+         * @author Bobby Signor
+         * @param <T> The data type to be stored by the data structure.
+         */
+        private class BSTNode<T extends Term> {
+            private T item;
+            private BSTNode<T> leftNode = null;
+            private BSTNode<T> rightNode = null;
+
+            /**
+             * Constructs a BSTNode from an item.
+             * @param item The item to create the BSTNode from.
+             */
+            public BSTNode(T item) {
+                this.item = item;
+            }
+
+            /**
+             * Returns the item this node represents.
+             * @return the item the term represents.
+             */
+            public T getItem() {
+                return item;
+            }
+
+            /**
+             * Sets this node's left reference to the given node.
+             * @param leftNode New node to be assigned to the left position.
+             */
+            public void setLeftNode(BSTNode<T> leftNode) {
+                this.leftNode = leftNode;
+            }
+
+            public BSTNode<T> getLeftNode() {
+                return this.leftNode;
+            }
+
+            public void setRightNode(BSTNode<T> rightNode) {
+                this.rightNode = rightNode;
+            }
+
+            public BSTNode<T> getRightNode() {
+                return this.rightNode;
+            }
+        }
+
+        /**
+         * An in-order iterator for the BST structure.
+         * @author Bobby Signor
+         * @param <T> The data type to be stored by the data structure.
+         */
+        private class BSTIterator<T extends Term> implements Iterator<T> {
+            private LinkedBlockingQueue<T> inorder = new LinkedBlockingQueue<T>();
+            private BST<T> origin;
+            
+            public BSTIterator(BST<T> origin)  {
+                this.origin = origin;
+            }
+
+            private void startAssembleInorder() {
+                assembleInorder(this.origin.root);
+            }
+
+            private void assembleInorder(BST<T>.BSTNode<T> current) {
+                if (current != null) {
+                    assembleInorder(current.getLeftNode());
+                    this.inorder.add(current.getItem());
+                    assembleInorder(current.getRightNode());
+                }
+            }
+            
+            @Override
+            public boolean hasNext() {
+                return this.inorder.isEmpty();
+            }
+
+            @Override
+            public T next() {
+                return this.inorder.poll();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new BSTIterator<T>(this);
+        }
     }
 }
